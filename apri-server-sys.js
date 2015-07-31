@@ -953,7 +953,7 @@ app.get('/'+apriConfig.systemCode+'/'+apriClientName+'/lib/*.pdf', function(req,
 //  res.contentType('application/pdf');
 //  res.send(_jsFile);
 });
-app.get('/'+apriConfig.systemCode+'/'+apriClientName+'/lib/*.css', function(req, res) {
+app.get('/'+apriConfig.systemCode+'/'+apriClientName+'/*.css', function(req, res) {
 	getLocalFile(req, res, {contentType:'text/css'});
 });
 app.get('/'+apriConfig.systemCode+'/'+apriClientName+'/lib/*.gif', function(req, res) {
