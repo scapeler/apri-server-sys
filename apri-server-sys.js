@@ -886,7 +886,7 @@ app.get('/'+apriConfig.systemCode+'/js/*', function(req, res) {
         data = fs.readFileSync(systemFolderRoot + req.url );
     } catch (e) {
         //data=getTemplateConfig(req.url);
-        data = " \n//\n// node-apri.js - ERROR , js not found: " + req.url + "  ";
+        data = " \n//\n// apri-server-sys: ERROR , js not found: " + req.url + "  ";
     }
     if (!data.data) {
         res.send(data);
@@ -935,48 +935,35 @@ app.get('/'+apriConfig.systemCode+'/apri-elements/*', function(req, res) {
 
 // assets subfolder requests (mainly for images)
 app.get('/'+apriConfig.systemCode+'/apri-assets/*.png', function(req, res) {
-  console.log("Apri assets/* request: " + req.url );
-  var _jsFile=fs.readFileSync(systemFolderRoot + req.url ); 
-  res.contentType('image/png');
-  res.send(_jsFile);
+	getLocalFile(req, res, {contentType:'image/png'});
 });
 
 // set contenttype depending on extension
 app.get('/'+apriConfig.systemCode+'/'+apriClientName+'/lib/*.ppt', function(req, res) {
-  console.log("Apri lib/*ppt request: " + req.url );
-  var _jsFile=fs.readFileSync(systemFolderRoot + req.url ); 
-  res.contentType('application/mspowerpoint');
-  res.send(_jsFile);
+	getLocalFile(req, res, {contentType:'application/mspowerpoint'});
+//  console.log("Apri lib/*ppt request: " + req.url );
+//  var _jsFile=fs.readFileSync(systemFolderRoot + req.url );
+//  res.contentType('application/mspowerpoint');
+//  res.send(_jsFile);
 });
 app.get('/'+apriConfig.systemCode+'/'+apriClientName+'/lib/*.pdf', function(req, res) {
-  console.log("Apri lib/*pdf request: " + req.url );
-  var _jsFile=fs.readFileSync(systemFolderRoot + req.url ); 
-  res.contentType('application/pdf');
-  res.send(_jsFile);
+	getLocalFile(req, res, {contentType:'application/pdf'});
+//  console.log("Apri lib/*pdf request: " + req.url );
+//  var _jsFile=fs.readFileSync(systemFolderRoot + req.url );
+//  res.contentType('application/pdf');
+//  res.send(_jsFile);
 });
 app.get('/'+apriConfig.systemCode+'/'+apriClientName+'/lib/*.css', function(req, res) {
-  console.log("Apri lib/*css request: " + req.url );
-  var _jsFile=fs.readFileSync(systemFolderRoot + req.url ); 
-  res.contentType('text/css');
-  res.send(_jsFile);
+	getLocalFile(req, res, {contentType:'text/css'});
 });
 app.get('/'+apriConfig.systemCode+'/'+apriClientName+'/lib/*.gif', function(req, res) {
-  console.log("Apri lib/*gif request: " + req.url );
-  var _jsFile=fs.readFileSync(systemFolderRoot + req.url ); 
-  res.contentType('image/gif');
-  res.send(_jsFile);
+	getLocalFile(req, res, {contentType:'image/gif'});
 });
 app.get('/'+apriConfig.systemCode+'/'+apriClientName+'/lib/*.png', function(req, res) {
-  console.log("Apri lib/*png request: " + req.url );
-  var _jsFile=fs.readFileSync(systemFolderRoot + req.url );
-  res.contentType('image/png');
-  res.send(_jsFile);
+	getLocalFile(req, res, {contentType:'image/png'});
 });
 app.get('/'+apriConfig.systemCode+'/'+apriClientName+'/lib/*.jpg', function(req, res) {
-  console.log("Apri lib/*jpg request: " + req.url );
-  var _jsFile=fs.readFileSync(systemFolderRoot + req.url ); 
-  res.contentType('image/jpeg');
-  res.send(_jsFile);
+	getLocalFile(req, res, {contentType:'image/jpeg'});
 });
 ////badalloc error for mp4 +- 1GB
 //app.get('/'+apriConfig.systemCode+'/'+apriClientName+'/lib/*.mp4', function(req, res) {
@@ -992,43 +979,36 @@ app.get('/'+apriConfig.systemCode+'/'+apriClientName+'/lib/apri-open-sans-fontfa
   res.send(_jsFile);
 });
 app.get('/'+apriConfig.systemCode+'/'+apriClientName+'/*.js', function(req, res) {
-  console.log("Apri lib/*js request: " + req.url );
-  var _jsFile=fs.readFileSync(systemFolderRoot + req.url ); 
-  res.contentType('application/javascript');
-  res.send(_jsFile);
+	getLocalFile(req, res, {contentType:'application/javascript'});
 });
 
 // todo: apri-client-aireas as appname variabel maken
-app.get('/'+apriConfig.systemCode+'/'+'apri-client-aireas'+'/lib/*.js', function(req, res) {
-  console.log("Apri lib/*js request: " + req.url );
-  var _jsFile=fs.readFileSync(systemFolderRoot + req.url ); 
-  res.contentType('application/javascript');
-  res.send(_jsFile);
+app.get('/'+apriConfig.systemCode+'/'+'apri-client-aireas'+'/*.js', function(req, res) {
+	getLocalFile(req, res, {contentType:'application/javascript'});
 });
 app.get('/'+apriConfig.systemCode+'/'+'apri-client-aireas'+'/*.css', function(req, res) {
-  console.log("Apri lib/*css request: " + req.url );
-  var _jsFile=fs.readFileSync(systemFolderRoot + req.url ); 
-  res.contentType('text/css');
-  res.send(_jsFile);
+	getLocalFile(req, res, {contentType:'text/css'});
 });
 app.get('/'+apriConfig.systemCode+'/'+'apri-client-aireas'+'/*.png', function(req, res) {
-  console.log("Apri lib/*png request: " + req.url );
-  var _jsFile=fs.readFileSync(systemFolderRoot + req.url ); 
-  res.contentType('image/png');
-  res.send(_jsFile);
+	getLocalFile(req, res, {contentType:'image/png'});
 });
 app.get('/'+apriConfig.systemCode+'/'+'apri-client-aireas'+'/*.gif', function(req, res) {
-  console.log("Apri lib/*gif request: " + req.url );
-  var _jsFile=fs.readFileSync(systemFolderRoot + req.url ); 
-  res.contentType('image/gif');
-  res.send(_jsFile);
+	getLocalFile(req, res, {contentType:'image/gif'});
 });
 app.get('/'+apriConfig.systemCode+'/'+'apri-client-aireas'+'/*.jpg', function(req, res) {
-  console.log("Apri lib/*jpg request: " + req.url );
-  var _jsFile=fs.readFileSync(systemFolderRoot + req.url ); 
-  res.contentType('image/jpeg');
-  res.send(_jsFile);
+	getLocalFile(req, res, {contentType:'image/jpeg'});
 });
+
+var getLocalFile = function(req, res, options) {
+	console.log("Apri /*.extension request: " + req.url );
+	fs.readFile(systemFolderRoot + req.url, function(err, data){
+		if (err) {
+			console.log(err);
+		}
+		res.contentType(options.contentType);
+		res.send(data);
+	})
+};
 
 
 // build folder is for minimized javascripts
