@@ -939,14 +939,14 @@ app.get('/'+apriConfig.systemCode+'/apri-assets/*.png', function(req, res) {
 });
 
 // set contenttype depending on extension
-app.get('/'+apriConfig.systemCode+'/'+apriClientName+'/lib/*.ppt', function(req, res) {
+app.get('/'+apriConfig.systemCode+'/'+apriClientName+'/*.ppt', function(req, res) {
 	getLocalFile(req, res, {contentType:'application/mspowerpoint'});
 //  console.log("Apri lib/*ppt request: " + req.url );
 //  var _jsFile=fs.readFileSync(systemFolderRoot + req.url );
 //  res.contentType('application/mspowerpoint');
 //  res.send(_jsFile);
 });
-app.get('/'+apriConfig.systemCode+'/'+apriClientName+'/lib/*.pdf', function(req, res) {
+app.get('/'+apriConfig.systemCode+'/'+apriClientName+'/*.pdf', function(req, res) {
 	getLocalFile(req, res, {contentType:'application/pdf'});
 //  console.log("Apri lib/*pdf request: " + req.url );
 //  var _jsFile=fs.readFileSync(systemFolderRoot + req.url );
@@ -956,13 +956,13 @@ app.get('/'+apriConfig.systemCode+'/'+apriClientName+'/lib/*.pdf', function(req,
 app.get('/'+apriConfig.systemCode+'/'+apriClientName+'/*.css', function(req, res) {
 	getLocalFile(req, res, {contentType:'text/css'});
 });
-app.get('/'+apriConfig.systemCode+'/'+apriClientName+'/lib/*.gif', function(req, res) {
+app.get('/'+apriConfig.systemCode+'/'+apriClientName+'/*.gif', function(req, res) {
 	getLocalFile(req, res, {contentType:'image/gif'});
 });
-app.get('/'+apriConfig.systemCode+'/'+apriClientName+'/lib/*.png', function(req, res) {
+app.get('/'+apriConfig.systemCode+'/'+apriClientName+'/*.png', function(req, res) {
 	getLocalFile(req, res, {contentType:'image/png'});
 });
-app.get('/'+apriConfig.systemCode+'/'+apriClientName+'/lib/*.jpg', function(req, res) {
+app.get('/'+apriConfig.systemCode+'/'+apriClientName+'/*.jpg', function(req, res) {
 	getLocalFile(req, res, {contentType:'image/jpeg'});
 });
 ////badalloc error for mp4 +- 1GB
