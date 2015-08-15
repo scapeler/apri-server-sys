@@ -1029,59 +1029,71 @@ app.get('/'+apriConfig.systemCode+'/'+apriClientName+'/models/*.js', function(re
 });
 */
 
-// read json templates, create .js, cache and return result to client
-app.get('/'+apriConfig.systemCode+'/'+apriClientName+'/templates/*.js', function(req, res) {
-    console.log("Apri templates/*js request: " + req.url );
+//for (var appKey in apriConfig.apps) {
+	// read json templates, create .js, cache and return result to client
+	app.get('/'+apriConfig.systemCode+'/:appKey/template/:template', function(req, res) {
+		var appkey = req.params.appKey;
+		var appConfig = apriConfig.apps[req.params.appKey];
+		var appLocation = appConfig.appLocation;
+		console.log("App templates request: " + appkey );
+		//console.log("App config for app: " + appKey );
+		console.log("Apri templates/*js request: " + req.params.template );
 
-    res.contentType('application/javascript');
-    var data;
-    try {
-        data = fs.readFileSync(systemFolderRoot + req.url );
-		console.log("INFO , Template found: " + systemFolderRoot + req.url);
-    } catch (e) {
-        data=getTemplateConfig(req.url);
-        //data = " \n//\n// ERROR , Template not found: " + req.url + "  ";
-		console.log("ERROR , Template not found: " + systemFolderRoot +req.url);
-    }
-    if (!data.data) {
-        res.send(data);
-    } else {
-        if (data.code && data.code==200) {
-            res.send(data.data);
-        } else {
-            res.send(data.code, data.data);
-        }
-    }
-});
+		res.contentType('application/javascript');
+		var data;
+		try {
+			var fileLocation = systemFolderRoot + '/' + apriConfig.systemCode + '/' + appLocation + '/templates/' + req.params.template;
+			var fileLocationJs = fileLocation + '.js';
+			var fileLocationJson = fileLocation + '.json';
+			console.log(fileLocationJs);
+			data = fs.readFileSync(fileLocationJs);
+			console.log("INFO , Template found: " + fileLocationJs);
+		} catch (e) {
+			data=getTemplateConfig(fileLocation);
+			//data = " \n//\n// ERROR , Template not found: " + req.url + "  ";
+			console.log("ERROR , Template not found: " + fileLocationJson);
+		}
+		if (!data.data) {
+			res.send(data);
+		} else {
+			if (data.code && data.code==200) {
+				res.send(data.data);
+			} else {
+				res.status(data.code).send(data.data);
+			}
+		}
+	});
+//}
 
-function getTemplateConfig(url) {
+function getTemplateConfig(fileLocation) {
     var error=false;
-    var jsonUrl = url.replace('.js','.json');
+	var fileLocationJson = fileLocation + '.json'
+    //var jsonUrl = url.replace('.js','.json');
     var configFile=null;
     var data={"code": 200, "data": ""};
     
     try {
-        configFile = fs.readFileSync(systemFolderRoot + jsonUrl );
+        configFile = fs.readFileSync(fileLocationJson );
     } catch (e) {
         error=true;
     }
     if (error) {
-        console.log( 'Template generation ERROR: ' + systemFolderRoot + jsonUrl + ' ' );
+        console.log( 'Template generation ERROR: ' + fileLocationJson + ' ' );
         data.code = 404;
-        data.data = "ERROR , Template not found: " + jsonUrl + "  ";
+        data.data = "ERROR , Template not found: " + fileLocationJson + "  ";
     } else {
-        console.log( 'Template generation: ' + jsonUrl + ' INFO' );
+        console.log( 'Template generation: ' + fileLocationJson + ' INFO' );
         try {
             var configData = JSON.parse(configFile);
         } catch(e2) {
             error=true;
         }
         if (error) {
-            console.log( 'Template generation JSON parse ERROR: ' + jsonUrl + ' ' );
+            console.log( 'Template generation JSON parse ERROR: ' + fileLocationJson + ' ' );
             data.code = 500;
-            data.data = "ERROR , Template json incorrect: " + jsonUrl + "  ";
+            data.data = "ERROR , Template json incorrect: " + fileLocationJson + "  ";
         } else {
-            data.data = apriTemplateTool.createTemplate(configData, url, true) ;
+            data.data = apriTemplateTool.createTemplate(configData, fileLocationJson, false) ;
         }
     }
     return data ;

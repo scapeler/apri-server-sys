@@ -94,7 +94,7 @@ module.exports = {
 		        if (module) {
             		newTemplate = newTemplate.concat( "\n Y.templateHTML[\"", _template.name||_template.templateName, "\"]=\'", tmpTemplateContent2, "';");
 				} else {
-                	newTemplate = newTemplate.concat( tmpTemplateContent2);
+                	newTemplate = newTemplate.concat( tmpTemplateContent);
                 	i=templateConfig.templates.length;  //only one template for portlets
                 }
         	}
