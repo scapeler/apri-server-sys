@@ -711,6 +711,12 @@ app.get('/'+apriConfig.systemCode+'/:internalapp/*', function(req, res, next) {
 	if (req.params.internalapp == 'apri-client-aireas') {
 		apriClientName = req.params.internalapp;
 	}
+	if (req.params.internalapp == 'apri-client-openiod') {
+		apriClientName = req.params.internalapp;
+	}
+	if (req.params.internalapp == 'apri-client-scapeler') {
+		apriClientName = req.params.internalapp;
+	}
 	console.log(apriClientName);
 	next();
 });
@@ -982,22 +988,26 @@ app.get('/'+apriConfig.systemCode+'/'+apriClientName+'/*.js', function(req, res)
 	getLocalFile(req, res, {contentType:'application/javascript'});
 });
 
-// todo: apri-client-aireas as appname variabel maken
-app.get('/'+apriConfig.systemCode+'/'+'apri-client-aireas'+'/*.js', function(req, res) {
-	getLocalFile(req, res, {contentType:'application/javascript'});
-});
-app.get('/'+apriConfig.systemCode+'/'+'apri-client-aireas'+'/*.css', function(req, res) {
-	getLocalFile(req, res, {contentType:'text/css'});
-});
-app.get('/'+apriConfig.systemCode+'/'+'apri-client-aireas'+'/*.png', function(req, res) {
-	getLocalFile(req, res, {contentType:'image/png'});
-});
-app.get('/'+apriConfig.systemCode+'/'+'apri-client-aireas'+'/*.gif', function(req, res) {
-	getLocalFile(req, res, {contentType:'image/gif'});
-});
-app.get('/'+apriConfig.systemCode+'/'+'apri-client-aireas'+'/*.jpg', function(req, res) {
-	getLocalFile(req, res, {contentType:'image/jpeg'});
-});
+
+var apriClients = ['apri-client-aireas','apri-client-openiod','apri-client-scapeler'];
+for (var i=0;i<apriClients.length;i++) {
+	var apriClient = apriClients[i];
+	app.get('/'+apriConfig.systemCode+'/'+apriClient+'/*.js', function(req, res) {
+		getLocalFile(req, res, {contentType:'application/javascript'});
+	});
+	app.get('/'+apriConfig.systemCode+'/'+apriClient+'/*.css', function(req, res) {
+		getLocalFile(req, res, {contentType:'text/css'});
+	});
+	app.get('/'+apriConfig.systemCode+'/'+apriClient+'/*.png', function(req, res) {
+		getLocalFile(req, res, {contentType:'image/png'});
+	});
+	app.get('/'+apriConfig.systemCode+'/'+apriClient+'/*.gif', function(req, res) {
+		getLocalFile(req, res, {contentType:'image/gif'});
+	});
+	app.get('/'+apriConfig.systemCode+'/'+apriClient+'/*.jpg', function(req, res) {
+		getLocalFile(req, res, {contentType:'image/jpeg'});
+	});
+}
 
 var getLocalFile = function(req, res, options) {
 	console.log("Apri /*.extension request: " + req.url );
@@ -1039,7 +1049,8 @@ app.get('/'+apriConfig.systemCode+'/'+apriClientName+'/models/*.js', function(re
 		//console.log("App config for app: " + appKey );
 		console.log("Apri templates/*js request: " + req.params.template );
 
-		res.contentType('application/javascript');
+//		res.contentType('application/javascript');
+		res.contentType('text/html');
 		var data;
 		try {
 			var fileLocation = systemFolderRoot + '/' + apriConfig.systemCode + '/' + appLocation + '/templates/' + req.params.template;
