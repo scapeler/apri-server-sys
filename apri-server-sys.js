@@ -989,6 +989,23 @@ app.get('/'+apriConfig.systemCode+'/'+apriClientName+'/*.js', function(req, res)
 });
 
 
+app.get('/'+apriConfig.systemCode+'/client/:apriclient/*.js', function(req, res) {
+	getLocalFile(req, res, {contentType:'application/javascript'});
+});
+app.get('/'+apriConfig.systemCode+'/client/:apriclient/*.css', function(req, res) {
+	getLocalFile(req, res, {contentType:'text/css'});
+});
+app.get('/'+apriConfig.systemCode+'/client/:apriclient/*.png', function(req, res) {
+	getLocalFile(req, res, {contentType:'image/png'});
+});
+app.get('/'+apriConfig.systemCode+'/client/:apriclient/*.gif', function(req, res) {
+	getLocalFile(req, res, {contentType:'image/gif'});
+});
+app.get('/'+apriConfig.systemCode+'/client/:apriclient/*.jpg', function(req, res) {
+	getLocalFile(req, res, {contentType:'image/jpeg'});
+});
+
+// dit vervangen door bovenstaande
 var apriClients = ['apri-client-aireas','apri-client-openiod','apri-client-scapeler'];
 for (var i=0;i<apriClients.length;i++) {
 	var apriClient = apriClients[i];
