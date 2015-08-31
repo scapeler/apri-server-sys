@@ -706,8 +706,10 @@ app.get('/'+apriConfig.systemCode+'/', function(req, res) {
 
 apriClientName = apriClientSysName;
 // Change apriClientName into first parameter when this is a internal app name
-app.get('/'+apriConfig.systemCode+'/:internalapp/*', function(req, res, next) {
-	console.log('Internal app: ' + req.params.internalapp);
+app.get('/'+apriConfig.systemCode+'/client/:internalapp/*', function(req, res, next) {
+	console.log('Internal app client: ' + req.params.internalapp);
+	
+	
 	if (req.params.internalapp == 'apri-client-aireas') {
 		apriClientName = req.params.internalapp;
 	}
