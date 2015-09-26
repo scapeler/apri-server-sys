@@ -713,6 +713,9 @@ app.get('/'+apriConfig.systemCode+'/client/:internalapp/*', function(req, res, n
 	if (req.params.internalapp == 'apri-client-aireas') {
 		apriClientName = req.params.internalapp;
 	}
+	if (req.params.internalapp == 'apri-client-aireas-stats') {
+		apriClientName = req.params.internalapp;
+	}
 	if (req.params.internalapp == 'apri-client-leaflet') {
 		apriClientName = req.params.internalapp;
 	}
@@ -1011,7 +1014,9 @@ app.get('/'+apriConfig.systemCode+'/client/:apriclient/*.jpg', function(req, res
 });
 
 // dit vervangen door bovenstaande
-var apriClients = ['apri-client-aireas', 'apri-client-leaflet', 'apri-client-openiod', 'apri-client-scapeler'];
+var apriClients = ['apri-client-aireas'
+, 'apri-client-aireas-stats'
+, 'apri-client-leaflet', 'apri-client-openiod', 'apri-client-scapeler'];
 for (var i=0;i<apriClients.length;i++) {
 	var apriClient = apriClients[i];
 	app.get('/'+apriConfig.systemCode+'/'+apriClient+'/*.js', function(req, res) {
@@ -1063,7 +1068,7 @@ app.get('/'+apriConfig.systemCode+'/'+apriClientName+'/models/*.js', function(re
 
 //for (var appKey in apriConfig.apps) {
 	// read json templates, create .js, cache and return result to client
-	app.get('/'+apriConfig.systemCode+'/:appKey/template/:template', function(req, res) {
+	app.get('/'+apriConfig.systemCode+'/client/:appKey/template/:template', function(req, res) {
 		var appkey = req.params.appKey;
 		var appConfig = apriConfig.apps[req.params.appKey];
 		var appLocation = appConfig.appLocation;
