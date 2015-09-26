@@ -1175,7 +1175,8 @@ module.exports = {
             var _formClass = (args.formClass)?args.formClass:"";
             var _formStyle = (args.formStyle)?args.formStyle:" width:9em; ";
             if (args.mode=='edit') {
-                newBlock+='<!-- Fieldset template: '+ args.id +' -->\n<div class="'+Y.classNames['formComponent']+ ' formmgr-row" name="'+ args.fieldName+'">';
+				var _blockClass = (args.blockClass)?args.blockClass:"";
+                newBlock+='<!-- Fieldset template: '+ args.id +' -->\n<div class="'+Y.classNames['formComponent']+ ' formmgr-row '+_blockClass+'" name="'+ args.fieldName+'">';
                 if (args.labelText!=undefined) {
                     newBlock+='<label class="label" width="4em" for="{{apriFormContainer}}-' + args.fieldName + '">' +  args.labelText +"</label>";
                 }
