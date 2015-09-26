@@ -1,5 +1,5 @@
 
-/*jslint devel: true,  undef: true, newcap: true, white: true, maxerr: 50 */ 
+/*jslint devel: true,  undef: true, newcap: true, white: true, maxerr: 50 */   
 /**
  * The apri-server-createtemplate module for creating templates.
  * @module apri-server-createtemplate
@@ -23,6 +23,7 @@ var Y = {
 };
 Y.classNames= {
         view   						: Y.getClassName('view'),
+        formComponent				: Y.getClassName('form-component'),
         viewHeader   				: Y.getClassName('view-header'),
         viewBody   					: Y.getClassName('view-body'),
         viewFooter   				: Y.getClassName('view-footer'),
@@ -142,7 +143,7 @@ module.exports = {
         
     
     blockDefaults.currency= { "blocks": [
-        { "block":"div", "class": "formmgr-row"
+        { "block":"div", "class": "apri-form-component formmgr-row"
           , "blocks": [
             { "block": "label", "class": "label", "labelText": "default"
                 , "for": {"separator": "-", "handlebar": "apriFormContainer" , "fieldName": "default"}
@@ -405,7 +406,7 @@ module.exports = {
 
     Y._ApriBlockTemplates.currency = function(args) {
         var newBlock="";
-        newBlock = newBlock.concat('<!-- Fieldset template: ', args.id, ' \n--><div class="formmgr-row">'
+        newBlock = newBlock.concat('<!-- Fieldset template: ', args.id, ' \n--><div class="',Y.classNames['formComponent'], ' formmgr-row" name="', args.fieldName,'">'
         	, '<label class="label" width="4em" for="{{apriFormContainer}}-', args.fieldName, '">', args.labelText, "</label>");
         if (args.fieldName) {
             newBlock = newBlock.concat('<div class="', Y.classNames['viewFieldMessage'],'"></div>' 
@@ -444,7 +445,7 @@ module.exports = {
 
     Y._ApriBlockTemplates.number = function(args) {
         var newBlock="";
-        newBlock = newBlock.concat('<!-- Fieldset template: ', args.id, ' \n--><div class="formmgr-row">'
+        newBlock = newBlock.concat('<!-- Fieldset template: ', args.id, ' \n--><div class="',Y.classNames['formComponent'], ' formmgr-row" name="', args.fieldName,'">'
         	, '<label class="label" width="4em" for="{{apriFormContainer}}-', args.fieldName, '">',  args.labelText, "</label>");
         if (args.fieldName) {
             newBlock = newBlock.concat('<div class="', Y.classNames['viewFieldMessage'],'"></div>'
@@ -519,7 +520,7 @@ module.exports = {
             var _style = (args.style)?'style="'+args.style+'"':"";
             var _inputFunction = (args.inputFunction)?args.inputFunction:"";
             if (args.text) {newBlock+= args.text;}
-            newBlock = newBlock.concat(' <div class="formmgr-row" '
+            newBlock = newBlock.concat(' <div class="',Y.classNames['formComponent'], ' formmgr-row" name="', args.fieldName,'" '
             	, ' ', _style, ' '
             	, '>'
             	, '<div class="', Y.classNames['viewFieldMessage'],'"></div>'
@@ -565,7 +566,7 @@ module.exports = {
 			var _inputFunction = (args.inputFunction)?args.inputFunction:"";
 			var _placeholder = (args.placeholder)?' placeholder="'.concat( args.placeholder, '"'):"";
 			var _editClass = args.edit?"aprientry-edit-true":"aprientry-edit-false"
-			newBlock = newBlock.concat('<!-- Fieldset template: ', args.id, ' -->\n<div class="formmgr-row ', _editClass, '">'
+			newBlock = newBlock.concat('<!-- Fieldset template: ', args.id, ' -->\n<div class="',Y.classNames['formComponent'], ' formmgr-row ', _editClass, '" name="', args.fieldName,'">'
 				, '<div class="', Y.classNames['viewFieldMessage'],'"></div>'
 				, '<input'
 				, ' type="text" tabindex="2"'
@@ -643,8 +644,8 @@ module.exports = {
 					, _multiValueFormStyle
 					, '" '
 					, '>'
-					, '<div class="formmgr-row '
-					, '" '
+					, '<div class="',Y.classNames['formComponent'], ' formmgr-row '
+					, '" name="', args.fieldName,'" '
 					, ' id="{{apriFormContainer}}-'
 					, args.fieldName
 					, '-multivalue" style="display:inline-block; " > '
@@ -667,8 +668,8 @@ module.exports = {
 					, _singleValueFormStyle
 					, '" '
 					, '>'
-					, '<div class="formmgr-row '
-					, '" '
+					, '<div class="',Y.classNames['formComponent'], ' formmgr-row '
+					, '" name="', args.fieldName,'" '
 					, ' id="{{apriFormContainer}}-'
 					, args.fieldName
 					, '-singlevalue" > '
@@ -689,7 +690,7 @@ module.exports = {
 			
 			newBlock = newBlock.concat('<!-- Autocomplete template: '
 				, args.id
-				, ' -->\n<div class="formmgr-row" style="'
+				, ' -->\n<div class="',Y.classNames['formComponent'], ' formmgr-row" name="', args.fieldName,'" style="'
 				, _style
 				, '">'
 				, '<div class="', Y.classNames['viewFieldMessage'],'"></div>'
@@ -810,7 +811,7 @@ module.exports = {
 		if (args.mode=='edit') {
 			var _formClass = (args.formClass)?args.formClass:"";
 			var _formStyle = (args.formStyle)?args.formStyle:" width:100%; ";
-			newBlock+='<!-- textarea template: '+ args.id +' \n--><div class="formmgr-row aprientry-edit-false">';
+			newBlock+='<!-- textarea template: '+ args.id +' \n--><div class="'+Y.classNames['formComponent']+ ' formmgr-row aprientry-edit-false" name="', args.fieldName,'">';
 			// newBlock+='<label class="label" width="4em" for="{{apriFormContainer}}-' + args.fieldName + '">' +  args.labelText +"</label>";
 			newBlock=newBlock.concat('<div class="', Y.classNames['viewFieldMessage'],'"></div>');
 			newBlock+='<textarea';
@@ -871,7 +872,7 @@ module.exports = {
 /*
     Y._ApriBlockTemplates.date = function(args) {
         var newBlock="";
-        newBlock+='<!-- Fieldset template: '+ args.id +' \n--><div class="formmgr-row">';
+        newBlock+='<!-- Fieldset template: '+ args.id +' \n--><div class="'+Y.classNames['formComponent']+ ' formmgr-row" name="', args.fieldName,'">';
         if (args.fieldName) {
 
             if (args.mode=='edit') {
@@ -918,7 +919,7 @@ module.exports = {
     Y._ApriBlockTemplates.date = function(args) {
         var _formStyleReadOnly;
         var newBlock="";
-        newBlock+='<!-- Fieldset template: '+ args.id +' \n--><div class="formmgr-row" style=" ">';
+        newBlock+='<!-- Fieldset template: '+ args.id +' \n--><div class="'+Y.classNames['formComponent']+ ' formmgr-row" name="'+ args.fieldName+'" style=" ">';
         if (!args.fieldName) return;
 
 		if (args.labelText && args.labelText !='') {
@@ -980,7 +981,7 @@ module.exports = {
     Y._ApriBlockTemplates.datetime = function(args) {
         var _formStyleReadOnly;
         var newBlock="";
-        newBlock+='<!-- Fieldset template: '+ args.id +' \n--><div class="formmgr-row" style=" ">';
+        newBlock+='<!-- Fieldset template: '+ args.id +' \n--><div class="'+Y.classNames['formComponent']+ ' formmgr-row" name="'+ args.fieldName+'" style=" ">';
         if (!args.fieldName) return;
 
 		if (args.labelText && args.labelText !='') {
@@ -1087,7 +1088,7 @@ module.exports = {
             var _formClass = (args.formClass)?args.formClass:"";
             var _formStyle = (args.formStyle)?args.formStyle:" width:2em; text-align:right; ";
             if (args.mode=='edit') {
-                newBlock+='<!-- Fieldset template: '+ args.id +' -->\n<div class="formmgr-row">';
+                newBlock+='<!-- Fieldset template: '+ args.id +' -->\n<div class="'+Y.classNames['formComponent']+ ' formmgr-row" name="'+ args.fieldName+'">';
                 newBlock+='<label class="label" width="4em" for="{{apriFormContainer}}-' + args.fieldName + '">' +  args.labelText +"</label>";
                 newBlock=newBlock.concat('<div class="', Y.classNames['viewFieldMessage'],'"></div>');
                 newBlock+='<input';
@@ -1174,7 +1175,7 @@ module.exports = {
             var _formClass = (args.formClass)?args.formClass:"";
             var _formStyle = (args.formStyle)?args.formStyle:" width:9em; ";
             if (args.mode=='edit') {
-                newBlock+='<!-- Fieldset template: '+ args.id +' -->\n<div class="formmgr-row">';
+                newBlock+='<!-- Fieldset template: '+ args.id +' -->\n<div class="'+Y.classNames['formComponent']+ ' formmgr-row" name="'+ args.fieldName+'">';
                 if (args.labelText!=undefined) {
                     newBlock+='<label class="label" width="4em" for="{{apriFormContainer}}-' + args.fieldName + '">' +  args.labelText +"</label>";
                 }
