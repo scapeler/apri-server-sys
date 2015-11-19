@@ -481,7 +481,10 @@ module.exports = {
     Y._ApriBlockTemplates.button = function(args) {
         var newBlock="";
         if (args.fieldName) {
-                newBlock = newBlock.concat('<!-- button template: ', args.id, ' -->\n');
+		
+				var _blockClass = (args.blockClass)?args.blockClass:"";
+                newBlock = newBlock.concat('<!-- Fieldset button template: ', args.id, ' -->\n<div class="', Y.classNames['formComponent'], ' formmgr-row ', _blockClass, '" name="', args.fieldName, '">');
+
 				var _style = (args.style)?args.style:"";
                 var _blockClass = (args.blockClass)?args.blockClass:"";
                 var _labelText = (args.labelText)?args.labelText:"";
@@ -489,16 +492,17 @@ module.exports = {
                     newBlock = newBlock.concat('<img src="',  args.imgSrc,  '" '
                     	, ' style=" ',  _style,  '"'
                     	, ' class="apri-img-button"'
-                    	, ' id="{{apriFormContainer}}{{apriFormContainerId}}-', args.fieldName, '-button">'
+                    	, ' id="apri-{{apriFormContainer}}{{apriFormContainerId}}-', args.fieldName, '-button">'
                     	, '</img>');
                 } else {
 					newBlock = newBlock.concat('<div '
                     	, ' class="' , _blockClass, '"'  //class for css icon
                     	, ' style=" ', _style, '"'
-                    	, ' id="{{apriFormContainer}}{{apriFormContainerId}}-', args.fieldName, '-button">'
+                    	, ' id="apri-{{apriFormContainer}}{{apriFormContainerId}}-', args.fieldName, '-button">'
                     	,  _labelText
                     	, '</div>');
                 }
+				newBlock = newBlock.concat('</div>');
         }
         return newBlock.concat("<!-- end of template button block: ", args.id, " \n-->");
     };
