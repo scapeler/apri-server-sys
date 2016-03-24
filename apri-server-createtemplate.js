@@ -361,10 +361,18 @@ module.exports = {
                	if (block.imgSrc) {
                     newBlock = newBlock.concat(' src="', block.imgSrc, '" ');
                 }
+                var _attributes ='';
+                if (block.attributes) {
+                    for (attr in block.attributes) {
+                        if (typeof block.attributes[attr] !== 'function') {
+                            _attributes = _attributes.concat( ' ', attr , '="', block.attributes[attr], '"');
+                        }
+                    }
+                }				
                 _style = (block.style)?block.style:"";
                 newBlock = newBlock.concat(' style=" ', _style, '"');
                 var _blockClass = (block.blockClass)?block.blockClass:"";
-                newBlock = newBlock.concat(' class=" ', _blockClass, '"'
+                newBlock = newBlock.concat(' class=" ', _blockClass, '" ', _attributes
                 	, '>');
                 if (block.text) {
                     newBlock = newBlock.concat( '<span>', block.text, '</span>');
