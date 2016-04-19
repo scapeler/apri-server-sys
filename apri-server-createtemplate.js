@@ -266,7 +266,26 @@ module.exports = {
                     	_id = _id.concat( ' id="', block.idShort, '"');
                 	} 
                 }
-                newBlock = newBlock.concat('<ul '+_id+'style="', _style, '"></ul>');
+                newBlock = newBlock.concat('<ul '+_id+'style="', _style, '">');
+                if (block.blocks) {
+                  	newBlock = newBlock.concat(Y._ApriBlocks(block.blocks));
+                }
+                newBlock = newBlock.concat('</ul>');
+                break;
+            case "li":
+                newBlock = newBlock.concat("<!-- LI: -->\n");
+                _style      = (block.style)?block.style:"";
+                if (block.id) {
+                    _id = _id.concat( ' id="{{apriFormContainerId}}-', block.id, '"');
+                } else { if (block.idShort) {
+                    	_id = _id.concat( ' id="', block.idShort, '"');
+                	} 
+                }
+                newBlock = newBlock.concat('<li '+_id+'style="', _style, '">');
+                if (block.blocks) {
+                  	newBlock = newBlock.concat(Y._ApriBlocks(block.blocks));
+                }
+                newBlock = newBlock.concat('</li>');
                 break;
             case "html":
                 newBlock = newBlock.concat("<!-- HTML: -->\n");
@@ -327,6 +346,126 @@ module.exports = {
                   	newBlock = newBlock.concat(Y._ApriBlocks(block.blocks));
                 }
               	newBlock = newBlock.concat( '</div>');
+                break;
+            case "header":
+                newBlock = newBlock.concat("<!-- HEADER: -->\n"
+                	, '<header ');
+                var _id = "";    
+                if (block.id) {
+                    _id = _id.concat( ' id="{{apriFormContainer}}{{apriFormContainerId}}-', block.id, '"');
+                } else { if (block.idShort) {
+                    	_id = _id.concat( ' id="', block.idShort, '"');
+                	} 
+                }
+                if (block.attributes) {
+                    //for (var i=0;i<block.attributes.lenght;i++){
+                    for (attr in block.attributes) {
+                        if (typeof block.attributes[attr] !== 'function') {
+                            newBlock = newBlock.concat( ' ', attr , '="', block.attributes[attr], '"');
+                        }
+                    }
+                }
+                _style = (block.style)?block.style:"";
+                newBlock = newBlock.concat(' ', _id, ' style=" ', _style, '"');
+                var _blockClass = (block.blockClass)?block.blockClass:"";
+                newBlock = newBlock.concat(' class=" ', _blockClass, '"', '>');
+                if (block.text) {
+                    newBlock = newBlock.concat( block.text);
+                }
+                if (block.blocks) {
+                  	newBlock = newBlock.concat(Y._ApriBlocks(block.blocks));
+                }
+              	newBlock = newBlock.concat( '</header>');
+                break;
+            case "footer":
+                newBlock = newBlock.concat("<!-- FOOTER: -->\n"
+                	, '<footer ');
+                var _id = "";    
+                if (block.id) {
+                    _id = _id.concat( ' id="{{apriFormContainer}}{{apriFormContainerId}}-', block.id, '"');
+                } else { if (block.idShort) {
+                    	_id = _id.concat( ' id="', block.idShort, '"');
+                	} 
+                }
+                if (block.attributes) {
+                    //for (var i=0;i<block.attributes.lenght;i++){
+                    for (attr in block.attributes) {
+                        if (typeof block.attributes[attr] !== 'function') {
+                            newBlock = newBlock.concat( ' ', attr , '="', block.attributes[attr], '"');
+                        }
+                    }
+                }
+                _style = (block.style)?block.style:"";
+                newBlock = newBlock.concat(' ', _id, ' style=" ', _style, '"');
+                var _blockClass = (block.blockClass)?block.blockClass:"";
+                newBlock = newBlock.concat(' class=" ', _blockClass, '"', '>');
+                if (block.text) {
+                    newBlock = newBlock.concat( block.text);
+                }
+                if (block.blocks) {
+                  	newBlock = newBlock.concat(Y._ApriBlocks(block.blocks));
+                }
+              	newBlock = newBlock.concat( '</footer>');
+                break;
+            case "section":
+                newBlock = newBlock.concat("<!-- SECTION: -->\n"
+                	, '<section ');
+                var _id = "";    
+                if (block.id) {
+                    _id = _id.concat( ' id="{{apriFormContainer}}{{apriFormContainerId}}-', block.id, '"');
+                } else { if (block.idShort) {
+                    	_id = _id.concat( ' id="', block.idShort, '"');
+                	} 
+                }
+                if (block.attributes) {
+                    //for (var i=0;i<block.attributes.lenght;i++){
+                    for (attr in block.attributes) {
+                        if (typeof block.attributes[attr] !== 'function') {
+                            newBlock = newBlock.concat( ' ', attr , '="', block.attributes[attr], '"');
+                        }
+                    }
+                }
+                _style = (block.style)?block.style:"";
+                newBlock = newBlock.concat(' ', _id, ' style=" ', _style, '"');
+                var _blockClass = (block.blockClass)?block.blockClass:"";
+                newBlock = newBlock.concat(' class=" ', _blockClass, '"', '>');
+                if (block.text) {
+                    newBlock = newBlock.concat( block.text);
+                }
+                if (block.blocks) {
+                  	newBlock = newBlock.concat(Y._ApriBlocks(block.blocks));
+                }
+              	newBlock = newBlock.concat( '</section>');
+                break;
+            case "nav":
+                newBlock = newBlock.concat("<!-- NAV: -->\n"
+                	, '<nav ');
+                var _id = "";    
+                if (block.id) {
+                    _id = _id.concat( ' id="{{apriFormContainer}}{{apriFormContainerId}}-', block.id, '"');
+                } else { if (block.idShort) {
+                    	_id = _id.concat( ' id="', block.idShort, '"');
+                	} 
+                }
+                if (block.attributes) {
+                    //for (var i=0;i<block.attributes.lenght;i++){
+                    for (attr in block.attributes) {
+                        if (typeof block.attributes[attr] !== 'function') {
+                            newBlock = newBlock.concat( ' ', attr , '="', block.attributes[attr], '"');
+                        }
+                    }
+                }
+                _style = (block.style)?block.style:"";
+                newBlock = newBlock.concat(' ', _id, ' style=" ', _style, '"');
+                var _blockClass = (block.blockClass)?block.blockClass:"";
+                newBlock = newBlock.concat(' class=" ', _blockClass, '"', '>');
+                if (block.text) {
+                    newBlock = newBlock.concat( block.text);
+                }
+                if (block.blocks) {
+                  	newBlock = newBlock.concat(Y._ApriBlocks(block.blocks));
+                }
+              	newBlock = newBlock.concat( '</nav>');
                 break;
             case "form":
                 newBlock = newBlock.concat("<!-- FORM: -->\n"
