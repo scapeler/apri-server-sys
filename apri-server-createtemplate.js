@@ -275,13 +275,14 @@ module.exports = {
             case "li":
                 newBlock = newBlock.concat("<!-- LI: -->\n");
                 _style      = (block.style)?block.style:"";
+				var _blockClass = (block.blockClass)?block.blockClass:"";
                 if (block.id) {
                     _id = _id.concat( ' id="{{apriFormContainerId}}-', block.id, '"');
                 } else { if (block.idShort) {
                     	_id = _id.concat( ' id="', block.idShort, '"');
                 	} 
                 }
-                newBlock = newBlock.concat('<li '+_id+'style="', _style, '">');
+                newBlock = newBlock.concat('<li '+_id+'style="', _style, '"', ' class=" ', _blockClass, '"', '>');
                 if (block.blocks) {
                   	newBlock = newBlock.concat(Y._ApriBlocks(block.blocks));
                 }
