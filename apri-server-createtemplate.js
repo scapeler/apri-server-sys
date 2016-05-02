@@ -44,12 +44,97 @@ Y.classNames= {
         multiValueInternDescription	: Y.getClassName('multivalue-intern-description'),
         multiValueChangedIntern		: Y.getClassName('multivaluechanged-intern')
 	};
+	
+var blockElement		= {};
+blockElement.h1			= {};
+blockElement.ul			= {};
+blockElement.li			= {};
+blockElement.div		= {};
+blockElement.header		= {};
+blockElement.footer		= {};
+blockElement.section	= {};
+blockElement.nav		= {};
+blockElement.html		= {};
+blockElement.a			= {};
+blockElement.fieldset	= {};
+blockElement.legend		= {};
+blockElement.video		= {};
+blockElement.img		= {};
+blockElement.span		= {};
+
+
+
+
+var processBlockElement	= function(block) {
+	var _newBlock	= '';
+	_newBlock		= _newBlock.concat('<!-- ', block.block, ': -->\n<', block.block, ' ', processBlockId(block), processBlockClass(block), processBlockStyle(block), processBlockAttributes(block), '>', processBlockContent(block), '</', block.block, '>');
+	return _newBlock;
+}
+
+// block.idPrefix	= undefined	-> no prefix
+// block.idPrefix	= ''		-> default prefix
+// block.idPrefix 	= 'prefix' 	-> named prefix
+// block.id			= 'id'		-> set id with or without prefix	
+var processBlockId	= function(block) {
+	var _id, _idPrefix, defaultPrefix;
+	defaultPrefix	= '{{apriFormContainer}}-';
+	_id	='';
+	if (block.idPrefix==undefined) {
+		_idPrefix='';
+	} else _idPrefix= block.idPrefix!=''?block.idPrefix:defaultPrefix;	
+	return block.id?'id="'+_idPrefix+block.id+'" ':'';
+};
+
+// block.class		= 'class'		-> set class 	
+var processBlockClass	= function(block) {
+	return block.blockClass?'class="'+block.blockClass+'" ':'';
+};
+
+// block.style		= 'style'		-> set style 	
+var processBlockStyle	= function(block) {
+	return block.style?'style="'+block.style+'" ':'';
+};
+
+// block.attributes		= [attributes]		-> set attributes 	
+var processBlockAttributes	= function(block) {
+	var _attributes ='';
+	if (block.attributes) {
+		for (attr in block.attributes) {
+			if (typeof block.attributes[attr] !== 'function') {
+				_attributes = _attributes.concat( attr, '="', block.attributes[attr], '" ');
+			}
+		}
+	}
+	return _attributes;
+};
+
+// block.text or block.blocks
+var processBlockContent	= function(block) {
+//	console.log('blockElement: '+block.block);
+//	console.log('blockElement text: '+block.text);
+//	console.log('blockElement blocks: '+block.blocks);
+//	if (block.blocks) console.log('blockElement blocks: '+block.blocks.length);
+	var _blocksContent;
+	if (block.text) return block.text;
+//	console.log('start blocks');
+	if (block.blocks && block.blocks.length>0) {
+//		console.log('blockElement blocks: '+block.blocks.length);
+		_blocksContent='';
+//		console.log('ul: ');
+		for (var i=0; i<block.blocks.length;i++) {
+//			console.log('ul: '+i);
+			_blocksContent+= processBlockElement(block.blocks[i]);
+		}
+		return _blocksContent;
+	}	
+	return '';
+}
+
+
 
 module.exports = {
 
     templateCache: [],
-
-
 
 
     
@@ -199,6 +284,23 @@ module.exports = {
        // Y.each(blocks, function(block) {
         for (var i=0; i<blocks.length;i++) {
             var block = blocks[i]; 
+			
+			if (blockElement[block.block]) {
+				newBlock += processBlockElement(block);
+				continue;
+			}
+			
+			if (block.block=='formComponent') {
+				if (typeof Y._ApriBlockTemplates[block.type] == 'function') {
+					var args=block;
+					newBlock = newBlock.concat( Y._ApriBlockTemplates[block.type](args));
+				} else {
+					newBlock = newBlock.concat("<!-- Fieldset template not found: ", block.type, " \n-->");
+				}
+			}
+			
+			
+ /*
             switch (block.block) { 
             case "a":
                 newBlock = newBlock.concat("<!-- anchor: -->");
@@ -221,7 +323,7 @@ module.exports = {
                 newBlock = newBlock.concat("</fieldset>"
                 	, "<!-- end of fieldset block  -->");
                 break;
-            case "grid":
+             case "grid":
                 newBlock = newBlock.concat("<!-- Grid: -->"
                 	, '<div class="yui3-g" ' )
                 if (block.height) {
@@ -272,6 +374,7 @@ module.exports = {
                 }
                 newBlock = newBlock.concat('</ul>');
                 break;
+ 
             case "li":
                 newBlock = newBlock.concat("<!-- LI: -->\n");
                 _style      = (block.style)?block.style:"";
@@ -546,6 +649,7 @@ module.exports = {
                 break;
             default:
             }            
+*/
         }; 
         return newBlock.concat("<!-- blocks:  -->");
     };
