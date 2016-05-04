@@ -947,6 +947,13 @@ app.get('/'+apriConfig.systemCode+'/apri-elements/*', function(req, res) {
 });
 */
 
+app.get('/'+apriConfig.systemCode+'/eventsource/:eventsource', function(req, res) {
+	//getLocalFile(req, res, {contentType:'text/css'});
+	console.log('EventSource action from '+ req.params.eventsource );
+	res.contentType('text/event-stream');
+	res.send('EventSource response');
+});
+
 // assets subfolder requests (mainly for images)
 app.get('/'+apriConfig.systemCode+'/apri-assets/*.png', function(req, res) {
 	getLocalFile(req, res, {contentType:'image/png'});
