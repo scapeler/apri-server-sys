@@ -950,8 +950,44 @@ app.get('/'+apriConfig.systemCode+'/apri-elements/*', function(req, res) {
 app.get('/'+apriConfig.systemCode+'/eventsource/:eventsource', function(req, res) {
 	//getLocalFile(req, res, {contentType:'text/css'});
 	console.log('EventSource action from '+ req.params.eventsource );
-	res.contentType('text/event-stream');
+	
+	res.writeHead(200, {
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache",
+      "Access-Control-Allow-Origin": "*"
+    });
+	
+/*
+	//res.contentType('text/event-stream');
+	res.header("Content-Type", "text/event-stream");
+	res.header("Access-Control-Allow-Origin", "*");
+	res.header("Cache-Control", "no-cache");
 	res.send('EventSource response');
+*/	
+	res.write(":" + Array(2049).join(" ") + "\n"); // 2kB padding for IE
+	res.write("retry: 2000\n");
+	
+	var lastEventId = Number(req.headers["last-event-id"]) || Number(req.query.lastEventId) || 0;    //parsedURL.query.lastEventId) || 0;
+	console.log(lastEventId);
+	var timeoutId = 0;
+	var i = lastEventId;
+	var c = i + 100;
+	var f = function () {
+		if (++i < c) {
+			res.write("id: " + i + "\n");
+			res.write("data: " + i + "\n\n");
+			timeoutId = setTimeout(f, 1000);
+		} else {
+			res.end();
+		}
+	};
+
+	f();
+
+	res.on("close", function () {
+		clearTimeout(timeoutId);
+	});
+	
 });
 
 // assets subfolder requests (mainly for images)
