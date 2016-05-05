@@ -49,6 +49,7 @@ var fs 					= require('fs');
 
 var apriTemplateTool 	= require('./apri-server-createtemplate');
 var apriPortletTool 	= require('./apri-server-createportlet');
+var apriEventSource 	= require('./apri-server-eventsource');
 //var apriAireasGetPg 	= require('./node-apri-aireas-get-pg');
 //var apriNslGetPg 		= require('./node-apri-nsl-get-pg');
 //var apriGtfsGetPg 		= require('./node-apri-gtfs-get-pg');
@@ -951,43 +952,8 @@ app.get('/'+apriConfig.systemCode+'/eventsource/:eventsource', function(req, res
 	//getLocalFile(req, res, {contentType:'text/css'});
 	console.log('EventSource action from '+ req.params.eventsource );
 	
-	res.writeHead(200, {
-      "Content-Type": "text/event-stream",
-      "Cache-Control": "no-cache",
-      "Access-Control-Allow-Origin": "*"
-    });
-	
-/*
-	//res.contentType('text/event-stream');
-	res.header("Content-Type", "text/event-stream");
-	res.header("Access-Control-Allow-Origin", "*");
-	res.header("Cache-Control", "no-cache");
-	res.send('EventSource response');
-*/	
-	res.write(":" + Array(2049).join(" ") + "\n"); // 2kB padding for IE
-	res.write("retry: 2000\n");
-	
-	var lastEventId = Number(req.headers["last-event-id"]) || Number(req.query.lastEventId) || 0;    //parsedURL.query.lastEventId) || 0;
-	console.log(lastEventId);
-	var timeoutId = 0;
-	var i = lastEventId;
-	var c = i + 100;
-	var f = function () {
-		if (++i < c) {
-			res.write("id: " + i + "\n");
-			res.write("data: " + i + "\n\n");
-			timeoutId = setTimeout(f, 1000);
-		} else {
-			res.end();
-		}
-	};
-
-	f();
-
-	res.on("close", function () {
-		clearTimeout(timeoutId);
-	});
-	
+	apriEventSource.streamEvents(req.params.eventsource, req, res);
+		
 });
 
 // assets subfolder requests (mainly for images)
