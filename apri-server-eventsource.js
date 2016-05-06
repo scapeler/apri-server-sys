@@ -14,7 +14,7 @@ action.message	= {
 		text:'Dit is een testbericht'
 };
 eventSources.esSchedule	= [
-	{id:'S001', beginDT: '', endDT:'', hours:{'8':true,'10':true,'12':true,'14':true,'16':true,'18':true,'20':true,'0':true}, minutes:{'0':true,'43':true,'42':true}, esProcessId:'P001'}
+	{id:'S001', beginDT: '', endDT:'', hours:{'8':true,'10':true,'11':true,'12':true,'13':true,'14':true,'16':true,'18':true,'20':true,'9':true}, minutes:{'0':true,'10':true,'20':true,'30':true,'40':true,'50':true}, esProcessId:'P001'}
 ];
 eventSources.esProcess	= {
 	'P001': {
@@ -28,7 +28,99 @@ eventSources.esProcess	= {
 
 eventSources.esCaseAction		= {};
 
+/* 
+case action:
+	caseActionKey	composed of esProcessId_actionId_caseStartTime
+	type			event type
+	startTime		time window start time
+	endTime			time window end time
+	text			text for message to send
+	onEnd			next action
+	duration		total duration action time window 
+	pulse			timeout time for dispatch event repeat
+	active			true: action is active
+	sleep			false: ready for dispatch;	true: already dispatched, waiting for next pulse 
+*/	 
 
+
+eventSources.humansensor	= function(req, res) {
+	
+//	if (eventsourceName == 'humansensor') humansensorStream (res, req);
+	
+	res.write(":" + Array(2049).join(" ") + "\n"); // 2kB padding for IE
+	res.write("retry: 2000\n");
+	
+	var lastEventId = Number(req.headers["last-event-id"]) || Number(req.query.lastEventId) || 0;    //parsedURL.query.lastEventId) || 0;
+	console.log(lastEventId);
+	var timeoutId = 0;
+	var i = lastEventId;
+	var c = i + 101;
+	
+	var actionString	= JSON.stringify( action.message);
+	var f = function () {	
+		//writeEventStr	= 'event: humansensordata\n';
+		//writeStr		= 'data: {"id": "' + i + '", "action": ' + actionString + '}\n\n';
+		if (++i < c) {
+			//res.write(writeEventStr);
+			//res.write(writeStr);
+			dispatchCaseActionEvents(res);
+			timeoutId = setTimeout(f, 10000);
+		} else {
+			res.end();
+		}
+	};
+	f();
+
+	res.on("close", function () {
+		clearTimeout(timeoutId);
+	});
+}
+
+var dispatchCaseActionEvents	= function(res) {
+	var _action, _event;
+	var _nowTime	= new Date().getTime();
+	for (var actionKey in eventSources.esCaseAction) {
+		_action	= eventSources.esCaseAction[actionKey]
+		if (_action.active == false || _action.sleep == true) continue;
+		if (_nowTime >= _action.startTime && _nowTime <= _action.endTime) {
+			if (_action.processAction.type) res.write('event: ' + _action.processAction.type + '\n');
+			_event	= 'data: {"id": "id"';
+			if (_action.processAction.text) _event	+= ',"text": "' + _action.processAction.text + '"';
+			_event	+= '}\n\n';
+			res.write(_event);
+			console.log('EventSource event: '+ _action.startTime + ' ' + _action.endTime + ' ' + _action.processAction.type + ' ' + _event);
+			//eventSources.esCaseAction.sleep	= true; 
+			_action.sleep	= true;
+		}
+	};
+}
+
+var writeHeaders	= function(res) {
+	res.writeHead(200, {
+		"Content-Type": "text/event-stream",
+		"Cache-Control": "no-cache",
+		"Access-Control-Allow-Origin": "*"
+	});
+}
+
+module.exports = {
+	
+	streamEvents: function(eventsource, req, res) {
+		console.log('start streamEvent: '+ eventsource);
+		if (eventSources[eventsource]) {
+			writeHeaders(res);
+			eventSources[eventsource](req, res);
+		} else {
+			res.send('ERROR: Unknown eventsource: '+ eventsource);
+		}
+		return;	
+	}
+
+};  // end of exports
+
+
+
+// EventSource case actions manager
 var createESCaseActions	= function() {
 	var dt		= {};
 	dt.now		= new Date();
@@ -45,6 +137,7 @@ var createESCaseActions	= function() {
 			//console.log('EventSource case action prepare to remove: ' + eventSources.esCaseAction[action].caseActionKey);
 			//console.log(eventSources.esCaseAction[action].endTime);
 			//console.log(dt.nowTime);
+			eventSources.esCaseAction[action].active= false;
 			toRemove[eventSources.esCaseAction[action].caseActionKey]={};
 		}
 	}
@@ -83,6 +176,7 @@ var createESCaseActions	= function() {
 	}
 }
 
+// create case actions from scheduled process
 var createCaseActions	= function(process, processAction, actionTime) {
 	var _action				= {};
 	var caseActionKey		= processAction.esProcessId + '_' + processAction.actionId + '_' + processAction.caseActionKeyTime;
@@ -109,60 +203,5 @@ var createCaseActions	= function(process, processAction, actionTime) {
 var intervalId	= setInterval(createESCaseActions, 10000);
 
 
-
-eventSources.humansensor	= function(req, res) {
-	
-//	if (eventsourceName == 'humansensor') humansensorStream (res, req);
-	
-	res.write(":" + Array(2049).join(" ") + "\n"); // 2kB padding for IE
-	res.write("retry: 2000\n");
-	
-	var lastEventId = Number(req.headers["last-event-id"]) || Number(req.query.lastEventId) || 0;    //parsedURL.query.lastEventId) || 0;
-	console.log(lastEventId);
-	var timeoutId = 0;
-	var i = lastEventId;
-	var c = i + 101;
-	
-	var actionString	= JSON.stringify( action.message);
-	var f = function () {	
-		writeEventStr	= 'event: humansensordata\n';
-		writeStr		= 'data: {"id": "' + i + '", "action": ' + actionString + '}\n\n';
-		if (++i < c) {
-			res.write(writeEventStr);
-			res.write(writeStr);
-			timeoutId = setTimeout(f, 10000);
-		} else {
-			res.end();
-		}
-	};
-	f();
-
-	res.on("close", function () {
-		clearTimeout(timeoutId);
-	});
-}
-
-var writeHeaders	= function(res) {
-	res.writeHead(200, {
-		"Content-Type": "text/event-stream",
-		"Cache-Control": "no-cache",
-		"Access-Control-Allow-Origin": "*"
-	});
-}
-
-module.exports = {
-	
-	streamEvents: function(eventsource, req, res) {
-		console.log('start streamEvent: '+ eventsource);
-		if (eventSources[eventsource]) {
-			writeHeaders(res);
-			eventSources[eventsource](req, res);
-		} else {
-			res.send('ERROR: Unknown eventsource: '+ eventsource);
-		}
-		return;	
-	}
-
- };
 
     
