@@ -49,7 +49,7 @@ var fs 					= require('fs');
 
 var apriTemplateTool 	= require('./apri-server-createtemplate');
 var apriPortletTool 	= require('./apri-server-createportlet');
-var apriEventSource 	= require('./apri-server-eventsource');
+//var apriEventSource 	= require('./apri-server-eventsource');
 //var apriAireasGetPg 	= require('./node-apri-aireas-get-pg');
 //var apriNslGetPg 		= require('./node-apri-nsl-get-pg');
 //var apriGtfsGetPg 		= require('./node-apri-gtfs-get-pg');
@@ -948,6 +948,7 @@ app.get('/'+apriConfig.systemCode+'/apri-elements/*', function(req, res) {
 });
 */
 
+/*
 app.get('/'+apriConfig.systemCode+'/eventsource/:eventsource', function(req, res) {
 	//getLocalFile(req, res, {contentType:'text/css'});
 	console.log('EventSource action from '+ req.params.eventsource );
@@ -955,6 +956,7 @@ app.get('/'+apriConfig.systemCode+'/eventsource/:eventsource', function(req, res
 	apriEventSource.streamEvents(req.params.eventsource, req, res);
 		
 });
+*/
 
 // assets subfolder requests (mainly for images)
 app.get('/'+apriConfig.systemCode+'/apri-assets/*.png', function(req, res) {

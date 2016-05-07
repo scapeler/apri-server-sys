@@ -83,10 +83,16 @@ var dispatchCaseActionEvents	= function(res) {
 		_action	= eventSources.esCaseAction[actionKey]
 		if (_action.active == false || _action.sleep == true) continue;
 		if (_nowTime >= _action.startTime && _nowTime <= _action.endTime) {
-			if (_action.processAction.type) res.write('event: ' + _action.processAction.type + '\n');
+			if (_action.processAction.type) {
+				_event	= 'event: ' + _action.processAction.type + '\n';
+				//res.contentLength(_event.length);
+				res.write(_event);
+				}
 			_event	= 'data: {"id": "id"';
 			if (_action.processAction.text) _event	+= ',"text": "' + _action.processAction.text + '"';
 			_event	+= '}\n\n';
+			_event	= 'event: ' + _action.processAction.type + '\n';
+			//res.contentLength(_event.length);
 			res.write(_event);
 			console.log('EventSource event: '+ _action.startTime + ' ' + _action.endTime + ' ' + _action.processAction.type + ' ' + _event);
 			//eventSources.esCaseAction.sleep	= true; 
