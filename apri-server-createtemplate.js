@@ -64,12 +64,39 @@ blockElement.span		= {};
 
 
 
-
+// Main function for processing template block. Recursive called in processBlockContent function
 var processBlockElement	= function(block) {
 	var _newBlock	= '';
-	_newBlock		= _newBlock.concat('<!-- ', block.block, ': -->\n<', block.block, ' ', processBlockId(block), processBlockClass(block), processBlockStyle(block), processBlockAttributes(block), '>', processBlockContent(block), '</', block.block, '>');
-	return _newBlock;
+	
+	if (blockElement[block.block]) {
+		_newBlock		= 
+			_newBlock.concat('<!-- ', block.block, ': -->\n<', block.block, ' '
+			, processBlockId(block)
+			, processBlockClass(block)
+			, processBlockStyle(block)
+			, processBlockAttributes(block)
+			, '>'
+			, processBlockContent(block)
+			, '</', block.block, '>');
+		return _newBlock;
+	}
+	
+	if (typeof Y._ApriBlockTemplates[block.type] == 'function') {
+		_newBlock = _newBlock.concat( Y._ApriBlockTemplates[block.type](block));
+		return _newBlock;
+	}
+	
+	if (block.block == 'template') {
+		_newBlock = _newBlock.concat( processBlockContent(block));
+		return _newBlock;
+	}
+		
+	
+	return _newBlock.concat("<!-- Fieldset template not found: ", block.type, " \n-->");
 }
+
+
+
 
 // block.idPrefix	= undefined	-> no prefix
 // block.idPrefix	= ''		-> default prefix
@@ -85,15 +112,21 @@ var processBlockId	= function(block) {
 	return block.id?'id="'+_idPrefix+block.id+'" ':'';
 };
 
+
+
 // block.class		= 'class'		-> set class 	
 var processBlockClass	= function(block) {
 	return block.blockClass?'class="'+block.blockClass+'" ':'';
 };
 
+
+
 // block.style		= 'style'		-> set style 	
 var processBlockStyle	= function(block) {
 	return block.style?'style="'+block.style+'" ':'';
 };
+
+
 
 // block.attributes		= [attributes]		-> set attributes 	
 var processBlockAttributes	= function(block) {
@@ -107,6 +140,8 @@ var processBlockAttributes	= function(block) {
 	}
 	return _attributes;
 };
+
+
 
 // block.text or block.blocks
 var processBlockContent	= function(block) {
@@ -175,12 +210,14 @@ module.exports = {
 		if (templateConfig.templates) {
         	for (var i=0;i<templateConfig.templates.length;i++) {
             	var _template = templateConfig.templates[i];
+				var block	= _template;
             
 				tmpTemplateContent = '';
             
 				tmpTemplateContent = tmpTemplateContent.concat( " <!-- \"template name\": \"", _template.name||_template.templateName, "-->");
 				if (_template.blocks) {
-					tmpTemplateContent = tmpTemplateContent.concat( Y._ApriBlocks(_template.blocks));
+//					tmpTemplateContent = tmpTemplateContent.concat( Y._ApriBlocks(_template.blocks));
+					tmpTemplateContent = tmpTemplateContent.concat( processBlockElement(block));
 				}
 				tmpTemplateContent = tmpTemplateContent.concat( "\n <!-- end of template: ", _template.name||_template.templateName, "-->");
   				var tmpTemplateContent2 = tmpTemplateContent.replace(/\n/g," ' +\n ' ");
@@ -277,6 +314,7 @@ module.exports = {
         ]
     };
 
+/*
     Y._ApriBlocks = function(blocks) {
         var newBlock="";
 		var _style="";
@@ -285,6 +323,7 @@ module.exports = {
         for (var i=0; i<blocks.length;i++) {
             var block = blocks[i]; 
 			
+			console.log(block.block);
 			if (blockElement[block.block]) {
 				newBlock += processBlockElement(block);
 				continue;
@@ -299,6 +338,7 @@ module.exports = {
 				}
 			}
 			
+*/
 			
  /*
             switch (block.block) { 
@@ -650,9 +690,13 @@ module.exports = {
             default:
             }            
 */
+/*
         }; 
         return newBlock.concat("<!-- blocks:  -->");
     };
+*/
+
+
 
     Y._ApriBlockTemplates = [];
 
