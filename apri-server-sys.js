@@ -34,12 +34,16 @@ var apriClientName 		= '';  // defaults to apriClientSysName
 // add module specific requires
 var request 			= require('request');
 var express 			= require('express');
+var passport 			= require('passport');
+var morgan				= require('morgan');
+var LocalStrategy 		= require('passport-local').Strategy;
 
 var cookieParser 		= require('cookie-parser');
 var session 			= require('express-session');
 var sessions			= {};
 var uid 				= require('uid-safe');
 //var bodyParser 		= require('connect-busboy');
+var bodyParser 			= require('body-parser');
 var fs 					= require('fs');
 //var handlebarsx 		= require('handlebars');
 //var xml2js 				= require('xml2js');
@@ -78,8 +82,70 @@ if (app.get('env') === 'production') {
   	sess.cookie.secure = true // serve secure cookies
 }
 
+passport.use('local', new LocalStrategy({
+		usernameField: 'username',
+		passwordField: 'password',
+		passReqToCallback: true,
+		session: false
+	},
+	function(req, username, password, done) {
+		console.log('Inlog parameters: '+username +' '+ password);
+		User.findOne({ username: username }, function(err, user) {
+			console.log('user validation');
+			if (err) { return done(err); }
+			if (!user) {
+				return done(null, false, { message: 'Incorrect username.' });
+			}
+			if (!user.validPassword(password)) {
+				return done(null, false, { message: 'Incorrect password.' });
+			}
+			return done(null, user);
+		});
+	}
+));
+
+/*
+app.configure(function() {
+  app.use(express.static('public'));
+  app.use(express.cookieParser());
+  app.use(express.bodyParser());
+  app.use(express.session({ secret: 'keyboard cat' }));
+  app.use(passport.initialize());
+  app.use(passport.session());
+  app.use(app.router);
+});
+*/
+
+// Configure Passport authenticated session persistence.
+//
+// In order to restore authentication state across HTTP requests, Passport needs
+// to serialize users into and deserialize users out of the session.  The
+// typical implementation of this is as simple as supplying the user ID when
+// serializing, and querying the user record by ID from the database when
+// deserializing.
+passport.serializeUser(function(user, cb) {
+  cb(null, user.id);
+});
+
+passport.deserializeUser(function(id, cb) {
+  db.users.findById(id, function (err, user) {
+    if (err) { return cb(err); }
+    cb(null, user);
+  });
+});
+
+
+app.use(morgan('dev'));
 app.use(cookieParser());
+//app.use(require('body-parser').urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(require('express-session')({ secret: 'keyboard cat', resave: false, saveUninitialized: false }));
+
+/*
+
 app.use(session(sess));
+
 
 //var random = utils.uid(24);
 //var sessionID = cookie['express.sid'].split('.')[0];
@@ -89,6 +155,7 @@ var ipMiddleware = function(req, res, next) {
     var clientIp = requestIp.getClientIp(req); // on localhost > 127.0.0.1
     next();
 };
+
 
 app.use(function(req, res, next) {
 //	console.log('Check for session info');
@@ -126,6 +193,13 @@ app.use(function(req, res, next) {
 	 
     next();
 });
+*/
+
+
+// Initialize Passport and restore authentication state, if any, from the
+// session.
+app.use(passport.initialize());
+app.use(passport.session());
 
 
 //app.use(bodyParser);
@@ -705,6 +779,43 @@ app.get('/'+apriConfig.systemCode+'/', function(req, res) {
   res.send("ok");
 });
 
+
+// test url for systemcode
+app.get('/'+apriConfig.systemCode+'/login', function(req, res) {
+  console.log("Reqparam login route: " + req.url);
+  res.send("login response");
+});
+
+app.post('/'+apriConfig.systemCode+'/login',
+//	passport.authenticate('local', { successRedirect: '/',
+//		failureRedirect: '/login',
+//		failureFlash: true }),
+
+	passport.authenticate('local'  //'basic',   //
+		, { session:false
+//		successRedirect: '/SCAPE604/app',
+//		failureRedirect: '/SCAPE604/login'
+		//, failureFlash: 'test failure flash'  
+		}
+		),	
+
+//	passport.authenticate('local'),
+	function(req,res) {
+		console.log('login test');
+		res.send('test');
+	}							   
+);
+
+
+
+// test url for systemcode
+app.get('/'+apriConfig.systemCode+'/', function(req, res) {
+  console.log("Reqparam: " + req.url);
+  res.send("ok");
+});
+
+
+
 apriClientName = apriClientSysName;
 // Change apriClientName into first parameter when this is a internal app name
 app.get('/'+apriConfig.systemCode+'/client/:internalapp/*', function(req, res, next) {
@@ -855,6 +966,16 @@ app.get('/'+apriConfig.systemCode+'/js/yui3/:yuiversion/:resturl*', function(req
   res.send(_jsFile);
 });
 */
+
+// handling of different filetypes in R folder
+app.get('/'+apriConfig.systemCode+'/r_out/*.png', function(req, res) {
+  //console.log("YUI request: " + req.url );
+  var _jsFile=fs.readFileSync(systemFolderRoot + req.url);
+  res.contentType('image/png');
+  res.send(_jsFile);
+});
+
+
 
 // handling of different filetypes in js folder (third party modules
 app.get('/'+apriConfig.systemCode+'/js/*.css', function(req, res) {
